@@ -15,5 +15,6 @@
 ## Run 
 - <code> git clone git@github.com:eslamismail/our-education-task.git </code>
 - <code> cd our-education-task</code>
+- <code> cp .env.example .env </code>
 - make sure you have docker in your machine and run <code> docker-compose up --build -d </code> -d if you want to run in background 
  - run migration and db seeder <code>docker exec -it task_app php artisan migrate --seed</code>
