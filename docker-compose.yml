@@ -1,0 +1,59 @@
+version: "3"
+services:
+  task_db:
+    image: mysql:5.7.22
+    container_name: task_db
+    restart: always
+    tty: true
+    ports:
+      - "9090:3306"
+    environment:
+      MYSQL_DATABASE: task
+      MYSQL_ROOT_PASSWORD: "012012012"
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    networks:
+      - task-network
+    volumes:
+      - .docker/mysql:/var/lib/mysql
+
+  task_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: task_app
+    restart: always
+    tty: true
+    depends_on:
+      - task_db
+    environment:
+      - APP_DEBBUG=true
+    ports:
+      - 8000:80
+    volumes:
+      - .:/app
+      - /storage/framework/views
+      - /storage/framework/sessions
+      - /bootstrap/cache
+      - /vendor
+    networks:
+      - task-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: task_phpmyadmin
+    restart: always
+    links:
+      - task_db:db
+    depends_on:
+      - task_db
+    ports:
+      - 8181:80
+    environment:
+      MYSQL_ROOT_PASSWORD: "012012012"
+    networks:
+      - task-network
+
+networks:
+  task-network:
+    driver: bridge
